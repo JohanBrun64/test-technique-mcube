@@ -31,8 +31,11 @@ Stack imposée :
 
 ## Contenu de l'application
 
-**Recherche d'un film**:<br/>
+**Recherche d'un film depuis l'API externe**:<br/>
 Un utilisateur peut rechercher un film et l'ajouter à sa filmothèque.
+
+**Recherche d'un film dans sa propre filmothèque**:<br/>
+Recherche côté backend
 
 **Affichage des films dans l'ordre**:<br/>
 Un utilisateur peut trier et afficher ses films par:
