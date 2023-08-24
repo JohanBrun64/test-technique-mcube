@@ -25,7 +25,7 @@ Des commits clairs seront appréciés afin d'évaluer votre logique de développ
 
 Stack imposée :
   - Front: React
-  - Back: NodeJS
+  - Back: NodeJS (TypeScript sera apprécié)
   - DB: MongoDB
 
 
