@@ -1,0 +1,40 @@
+version: '1'
+services:
+  frontend:
+    build: ./frontEnd/
+    container_name: frontEnd
+    depends_on:
+      - backend
+    volumes:
+      - ./frontEnd:/frontEnd
+      - /frontEnd/node_modules
+    ports:
+      - '3000:3000'
+  backend:
+    build: ./backEnd/
+    container_name: backEnd
+    depends_on:
+      - database
+    volumes:
+      - ./backEnd:/backEnd
+      - /backEnd/node_modules
+    expose:
+      - 8080
+    ports:
+      - '8080:8080'
+  database:
+    image: mongo
+    container_name: database
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+      - /etc/timezone:/etc/timezone:ro
+    ports:
+      - "27017:27017"
+    environment:
+      MONGOINITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGOINITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+
+volumes:
+  mongo-data:
+    driver: local
