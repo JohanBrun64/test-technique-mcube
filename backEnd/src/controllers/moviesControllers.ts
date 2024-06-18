@@ -4,8 +4,7 @@ import { tmdbServices } from "../services/tmdbService";
 export const moviesControllers = {
     getMovieFromTMDB: async (req: Request, res: Response) => {
         try {
-            const searchParams: string = new URLSearchParams(req.query as unknown as any).toString()
-            console.log(req.query)
+            const searchParams: string = new URLSearchParams(req.query as unknown as string).toString()
 
             if (!searchParams) {
                 return res.status(400).send('search params mandatory!')
