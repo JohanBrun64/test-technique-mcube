@@ -40,5 +40,34 @@ export const mongoServices = {
         const movie = movies.find((m) => m.title === movieTitle)
         return movie
     },
-
+    orderMovies: async (userId: string, orderingParam: keyof Movie): Promise<Movie[]> => {
+        const movies = await mongoServices.getUserList(userId)
+        movies.sort((a, b) => {
+            const movieA = a[orderingParam]
+            const movieB = b[orderingParam]
+            if (typeof orderingParam === "string") {
+                const stringMovieA = (movieA as string).toUpperCase()
+                const stringMovieB = (movieB as string).toUpperCase()
+                if (stringMovieA < stringMovieB) {
+                    return -1
+                }
+                if (stringMovieA > stringMovieB) {
+                    return 1
+                }
+                if (stringMovieA === stringMovieB) {
+                    return 0
+                }
+            }
+            // This couldn"t happen but if it's not handle, typescript trigger an error
+            if (typeof orderingParam === "number") {
+                return (movieA as number) - (movieB as number)
+            }
+            else {
+                const dateMovieA = new Date(movieA)
+                const dateMovieB = new Date(movieB)
+                return dateMovieA.getTime() - dateMovieB.getTime()
+            }
+        })
+        return movies
+    }
 }
