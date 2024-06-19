@@ -13,7 +13,14 @@ const initServer = async () => {
         res.send('Hello world!')
     })
 
-    app.use('/movies', moviesControllers.getMovieFromTMDB)
+    app.use('/movies/tmdb', moviesControllers.getMoviesFromTMDB)
+    app.use('/movies/userList', moviesControllers.getMoviesFromMongo)
+    app.use('/movies/addToList', moviesControllers.addMovietoUserList)
+    app.use('/movies/userList/movie/:id', moviesControllers.getMovieinUserList)
+    app.use('/movies/userList/ordered/:orderType', moviesControllers.getMoviesInUserListOrdered)
+    app.use('/movies/tmdb/movie/:id', moviesControllers.searchMovieDetails)
+    app.use('/movies/tmdb/movie/:id/recommendations', moviesControllers.getMovieRecommendations)
+    app.use('movies/userList/movie/:id/rate', moviesControllers.rateMovie)
 
     app.listen(port, () => {
         console.log(`Server running at http://localhost:${port}`)
