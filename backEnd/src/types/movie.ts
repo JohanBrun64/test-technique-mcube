@@ -3,4 +3,5 @@ export interface Movie {
     description: string
     releaseDate: Date
     image: string
+    id: number
 }
