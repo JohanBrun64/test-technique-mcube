@@ -12,9 +12,14 @@ export const mongoServices = {
         const db = getDb()
         if (db) {
             const Users: Collection<User> = await db.collection('users')
+            const addedMovie =
+            {
+                ...movie,
+                addedTime: new Date()
+            }
             const res = await Users.updateOne(
                 { _id: new ObjectId(userId) },
-                { $push: { movies: movie } }
+                { $push: { movies: addedMovie } }
             )
             return res
         }
@@ -32,7 +37,7 @@ export const mongoServices = {
             }
         }
         else {
-            throw new Error("no databse!")
+            throw new Error("no database!")
         }
     },
     searchMovieInUserList: async (userId: string, movieTitle: string): Promise<Movie | undefined> => {
@@ -63,11 +68,34 @@ export const mongoServices = {
                 return (movieA as number) - (movieB as number)
             }
             else {
-                const dateMovieA = new Date(movieA)
-                const dateMovieB = new Date(movieB)
+                const dateMovieA = new Date(movieA as Date)
+                const dateMovieB = new Date(movieB as Date)
                 return dateMovieA.getTime() - dateMovieB.getTime()
             }
         })
         return movies
+    },
+    rateMovie: async (userId: string, movie: Movie, rate: number): Promise<Movie | null> => {
+        const db = getDb()
+        if (db) {
+            const Users: Collection<User> = await db.collection('users')
+            await Users.updateOne(
+                { _id: new ObjectId(userId), "movies.id": movie.id },
+                { $set: { 'movies.$.id': rate } }
+            )
+            const result = await Users.findOne(
+                { _id: new ObjectId(userId), "movies.id": movie.id },
+            )
+            if (result) {
+                return result.movies.find(m => m.id === movie.id) ?? null
+            }
+            else {
+                return null
+            }
+        }
+        else {
+            throw new Error("no database!")
+        }
+
     }
 }

@@ -3,7 +3,7 @@ import { tmdbServices } from "../services/tmdbService";
 import { mongoServices } from "../services/mongoService";
 import { Movie } from "../types/movie";
 
-type ReqQuery = { userId: string, movie?: Movie, orderingParam?: keyof Movie }
+type ReqQuery = { userId: string, movie?: Movie, orderingParam?: keyof Movie, rate?: number }
 type Req = Request<unknown, unknown, unknown, ReqQuery>
 
 export const moviesControllers = {
@@ -95,6 +95,75 @@ export const moviesControllers = {
                 return res.status(400).send("orderingParam mandatory!")
             }
 
+        } catch (err) {
+            return res.status(500).send(`Error: ${err}`)
+        }
+    },
+    searchMovieDetails: async (req: Req, res: Response) => {
+        try {
+            const searchParams: string = new URLSearchParams(req.query as unknown as string).toString()
+
+            if (!searchParams) {
+                return res.status(400).send('search params mandatory!')
+            }
+            if (req.query.movie) {
+                const result = await tmdbServices.searchMovie(req.query.movie.id)
+                if (result) {
+                    return res.json(result)
+                }
+                else {
+                    return "unknown movie"
+                }
+            }
+            else {
+                return res.status(400).send("movie mandatory!")
+            }
+        } catch (err) {
+            return res.status(500).send(`Error: ${err}`)
+        }
+    },
+    getMovieRecommendations: async (req: Req, res: Response) => {
+        try {
+            const searchParams: string = new URLSearchParams(req.query as unknown as string).toString()
+
+            if (!searchParams) {
+                return res.status(400).send('search params mandatory!')
+            }
+            if (req.query.movie) {
+                const result = await tmdbServices.movieRecommendations(req.query.movie.id)
+                if (result) {
+                    return res.json(result)
+                }
+                else {
+                    return "unknown movie"
+                }
+            }
+            else {
+                return res.status(400).send("movie mandatory!")
+            }
+        } catch (err) {
+            return res.status(500).send(`Error: ${err}`)
+        }
+    },
+    rateMovie: async (req: Req, res: Response) => {
+        try {
+            const searchParams: string = new URLSearchParams(req.query as unknown as string).toString()
+
+            if (!searchParams) {
+                return res.status(400).send('search params mandatory!')
+            }
+            if (req.query.movie && req.query.rate) {
+                const result = await mongoServices.rateMovie(req.query.userId, req.query.movie, req.query.rate)
+                if (result) {
+                    return res.json(result)
+                }
+                else {
+                    return "unknown movie!"
+                }
+            }
+            else {
+                return res.status(400).send("movie and rate mandatory!")
+            }
         } catch (err) {
             return res.status(500).send(`Error: ${err}`)
         }
