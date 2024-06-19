@@ -10,9 +10,6 @@ const app: Express = express()
 const port = process.env.PORT || 8080
 const initServer = async () => {
     await initDb()
-    app.get('/', (req: Request, res: Response) => {
-        res.send('Hello world!')
-    })
 
     app.use('/user/create', usersControllers.createUser)
     app.use('/user/get', usersControllers.getUser)
