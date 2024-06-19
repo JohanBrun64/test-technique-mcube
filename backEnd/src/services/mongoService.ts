@@ -40,10 +40,16 @@ export const mongoServices = {
             throw new Error("no database!")
         }
     },
-    searchMovieInUserList: async (userId: string, movieTitle: string): Promise<Movie | undefined> => {
+    searchMovieInUserList: async (userId: string, movieTitle?: string, movieId?: number): Promise<Movie | undefined> => {
         const movies = await mongoServices.getUserList(userId)
-        const movie = movies.find((m) => m.title === movieTitle)
-        return movie
+        if (movieTitle) {
+            const movie = movies.find((m) => m.title === movieTitle)
+            return movie
+        }
+        if (movieId) {
+            const movie = movies.find((m) => m.id === movieId)
+            return movie
+        }
     },
     orderMovies: async (userId: string, orderingParam: keyof Movie): Promise<Movie[]> => {
         const movies = await mongoServices.getUserList(userId)
@@ -75,19 +81,19 @@ export const mongoServices = {
         })
         return movies
     },
-    rateMovie: async (userId: string, movie: Movie, rate: number): Promise<Movie | null> => {
+    rateMovie: async (userId: string, movieId: number, rate: number): Promise<Movie | null> => {
         const db = getDb()
         if (db) {
             const Users: Collection<User> = await db.collection('users')
             await Users.updateOne(
-                { _id: new ObjectId(userId), "movies.id": movie.id },
+                { _id: new ObjectId(userId), "movies.id": movieId },
                 { $set: { 'movies.$.id': rate } }
             )
             const result = await Users.findOne(
-                { _id: new ObjectId(userId), "movies.id": movie.id },
+                { _id: new ObjectId(userId), "movies.id": movieId },
             )
             if (result) {
-                return result.movies.find(m => m.id === movie.id) ?? null
+                return result.movies.find(m => m.id === movieId) ?? null
             }
             else {
                 return null

@@ -3,7 +3,7 @@ import { tmdbServices } from "../services/tmdbService";
 import { mongoServices } from "../services/mongoService";
 import { Movie } from "../types/movie";
 
-type ReqQuery = { userId: string, movie?: Movie, orderingParam?: keyof Movie, rate?: number }
+type ReqQuery = { userId: string, movieId?: number, movieTitle?: string, orderingParam?: keyof Movie, rate?: number }
 type Req = Request<unknown, unknown, unknown, ReqQuery>
 
 export const moviesControllers = {
@@ -41,9 +41,16 @@ export const moviesControllers = {
             if (!searchParams) {
                 return res.status(400).send('search params mandatory!')
             }
-            if (req.query.movie) {
-                const result = await mongoServices.addMovieToUserList(req.query.userId, req.query.movie)
-                return res.json(result)
+            if (req.query.movieId) {
+                const movie = await tmdbServices.searchMovie(req.query.movieId)
+                if (movie) {
+                    const formattedMovie = tmdbServices.formatMovie(movie)
+                    const result = await mongoServices.addMovieToUserList(req.query.userId, formattedMovie)
+                    return res.json(result)
+                }
+                else {
+                    res.status(404).send("movie unfound!")
+                }
             }
             else {
                 return res.status(400).send("movie mandatory!")
@@ -59,8 +66,8 @@ export const moviesControllers = {
             if (!searchParams) {
                 return res.status(400).send('search params mandatory!')
             }
-            if (req.query.movie) {
-                const result = await mongoServices.searchMovieInUserList(req.query.userId, req.query.movie.title)
+            if (req.query.movieTitle) {
+                const result = await mongoServices.searchMovieInUserList(req.query.userId, req.query.movieTitle)
                 if (result) {
                     return res.json(result)
                 }
@@ -106,8 +113,8 @@ export const moviesControllers = {
             if (!searchParams) {
                 return res.status(400).send('search params mandatory!')
             }
-            if (req.query.movie) {
-                const result = await tmdbServices.searchMovie(req.query.movie.id)
+            if (req.query.movieId) {
+                const result = await tmdbServices.searchMovie(req.query.movieId)
                 if (result) {
                     return res.json(result)
                 }
@@ -129,8 +136,8 @@ export const moviesControllers = {
             if (!searchParams) {
                 return res.status(400).send('search params mandatory!')
             }
-            if (req.query.movie) {
-                const result = await tmdbServices.movieRecommendations(req.query.movie.id)
+            if (req.query.movieId) {
+                const result = await tmdbServices.movieRecommendations(req.query.movieId)
                 if (result) {
                     return res.json(result)
                 }
@@ -152,8 +159,8 @@ export const moviesControllers = {
             if (!searchParams) {
                 return res.status(400).send('search params mandatory!')
             }
-            if (req.query.movie && req.query.rate) {
-                const result = await mongoServices.rateMovie(req.query.userId, req.query.movie, req.query.rate)
+            if (req.query.movieId && req.query.rate) {
+                const result = await mongoServices.rateMovie(req.query.userId, req.query.movieId, req.query.rate)
                 if (result) {
                     return res.json(result)
                 }
