@@ -18,5 +18,27 @@ export const mongoServices = {
             )
             return res
         }
-    }
+    },
+    getUserList: async (userId: string): Promise<Movie[]> => {
+        const db = getDb()
+        if (db) {
+            const Users: Collection<User> = await db.collection('users')
+            const user = await Users.findOne({ _id: new ObjectId(userId) })
+            if (user) {
+                return user.movies
+            }
+            else {
+                return []
+            }
+        }
+        else {
+            throw new Error("no databse!")
+        }
+    },
+    searchMovieInUserList: async (userId: string, movieTitle: string): Promise<Movie | undefined> => {
+        const movies = await mongoServices.getUserList(userId)
+        const movie = movies.find((m) => m.title === movieTitle)
+        return movie
+    },
+
 }
