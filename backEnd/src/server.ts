@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express"
 import dotenv from "dotenv"
 import { moviesControllers } from "./controllers/moviesControllers"
 import { initDb } from "./database/database"
+import { usersControllers } from "./controllers/usersControllers"
 
 dotenv.config()
 
@@ -12,6 +13,9 @@ const initServer = async () => {
     app.get('/', (req: Request, res: Response) => {
         res.send('Hello world!')
     })
+
+    app.use('/user/create', usersControllers.createUser)
+    app.use('/user/get', usersControllers.getUser)
 
     app.use('/movies/tmdb', moviesControllers.getMoviesFromTMDB)
     app.use('/movies/userList', moviesControllers.getMoviesFromMongo)
