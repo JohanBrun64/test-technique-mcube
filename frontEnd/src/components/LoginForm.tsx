@@ -1,21 +1,22 @@
-import { FormControl } from "@mui/material"
 import axios from "axios"
 import { FormEvent, useState } from "react"
-import { Link, redirect } from "react-router-dom"
-import useLocalStorage from "../hooks/useLocalStorage"
+import { Link, useNavigate } from "react-router-dom"
 
 export const LoginForm = () => {
 
     const [error, setError] = useState(false)
-    const [, setLogged] = useLocalStorage('userId', '')
+    const [, setLogged] = useState('')
+    const navigate = useNavigate()
 
-    const handleSubmitClick = (e: FormEvent<HTMLInputElement>) => {
+    const handleSubmitClick = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (e.currentTarget.name) {
-            axios.get(`http://localhost:8080/user/get?name=${e.currentTarget.name}`).then((res) => {
+        if (e.currentTarget.value) {
+            axios.get(`http://localhost:8080/user/get?name=${e.currentTarget.name.value}`).then((res) => {
                 if (res.data.userId) {
                     setError(false)
                     setLogged(res.data.userId)
+                    localStorage.setItem("userId", res.data.userId)
+                    window.dispatchEvent(new Event("storage"))
                     redirectToHome()
                 } else {
                     setError(true)
@@ -34,11 +35,11 @@ export const LoginForm = () => {
     }
 
     const redirectToHome = () => {
-        redirect('/')
+        navigate('/')
     }
 
     return (
-        <FormControl defaultValue="" required onSubmit={handleSubmitClick}>
+        <form defaultValue="" onSubmit={handleSubmitClick}>
             <h6>Login</h6>
             {displayError()}
             <label htmlFor="name">Name:</label>
@@ -46,6 +47,6 @@ export const LoginForm = () => {
             <button type="submit">Submit</button>
             <div>Don't have an account ?</div>
             <Link to="/register">Register</Link>
-        </FormControl>
+        </form>
     )
 }

@@ -1,16 +1,16 @@
-import { FormControl } from "@mui/material"
 import axios from "axios"
 import { FormEvent, useState } from "react"
-import { redirect } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export const RegisterForm = () => {
 
     const [error, setError] = useState(false)
+    const navigate = useNavigate()
 
-    const handleSubmitClick = (e: FormEvent<HTMLInputElement>) => {
+    const handleSubmitClick = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (e.currentTarget.name) {
-            axios.post(`http://localhost:8080/user/create?name=${e.currentTarget.name}`).then((res) => {
+            axios.post(`http://localhost:8080/user/create?name=${e.currentTarget.name.value}`).then((res) => {
                 if (res.status === 201) {
                     setError(false)
                     redirectToLogin()
@@ -31,16 +31,16 @@ export const RegisterForm = () => {
     }
 
     const redirectToLogin = () => {
-        redirect('/login')
+        navigate('/login')
     }
 
     return (
-        <FormControl defaultValue="" required onSubmit={handleSubmitClick}>
+        <form defaultValue="" onSubmit={handleSubmitClick}>
             <h6>Register</h6>
             {displayError()}
             <label htmlFor="name">Name:</label>
             <input type="text" id="name" name="user_name" />
             <button type="submit">Submit</button>
-        </FormControl>
+        </form>
     )
 }

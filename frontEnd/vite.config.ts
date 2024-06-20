@@ -5,6 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: "/",
   plugins: [react()],
+  optimizeDeps: {
+    include: ['@emotion/react', '@mui/styled-engine', 'prop-types']
+  },
   preview: {
     port: 3000,
     strictPort: true,

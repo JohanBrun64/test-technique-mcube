@@ -3,6 +3,7 @@ import dotenv from "dotenv"
 import { moviesControllers } from "./controllers/moviesControllers"
 import { initDb } from "./database/database"
 import { usersControllers } from "./controllers/usersControllers"
+import cors from "cors"
 
 dotenv.config()
 
@@ -10,6 +11,8 @@ const app: Express = express()
 const port = process.env.PORT || 8080
 const initServer = async () => {
     await initDb()
+
+    app.use(cors())
 
     app.use('/user/create', usersControllers.createUser)
     app.use('/user/get', usersControllers.getUser)

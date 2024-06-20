@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -6,20 +6,29 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import useLocalStorage from '../hooks/useLocalStorage';
 import { AccountCircle } from '@mui/icons-material';
-import { redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 
-export default function ButtonAppBar() {
+export function Header() {
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [logged, setLogged] = useLocalStorage('userId', '')
+    const [logged, setLogged] = useState('')
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        const listenStorageChange = () => {
+            if (localStorage.getItem("userId") !== null) {
+                setLogged(localStorage.getItem("userId") as string);
+            }
+        };
+        window.addEventListener("storage", listenStorageChange);
+        return () => window.removeEventListener("storage", listenStorageChange);
+    }, []);
 
     const clickLogin = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault()
-        redirect('/login')
+        navigate('/login')
     }
 
     const clickLogoff = (e: React.MouseEvent) => {
