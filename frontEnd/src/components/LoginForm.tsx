@@ -14,18 +14,22 @@ export const LoginForm = () => {
             name: { value: string }
         }
         if (target.name.value) {
-            axios.get(`http://localhost:8080/user/get?name=${target.name.value}`).then((res) => {
-                if (res.data.userId) {
-                    setError(false)
-                    setLogged(res.data.userId)
-                    localStorage.setItem("userId", res.data.userId)
-                    window.dispatchEvent(new Event("storage"))
-                    redirectToHome()
-                } else {
-                    setError(true)
-                }
+            try {
+                axios.get(`http://localhost:8080/user/get?name=${target.name.value}`).then((res) => {
+                    if (res.data.userId) {
+                        setError(false)
+                        setLogged(res.data.userId)
+                        localStorage.setItem("userId", res.data.userId)
+                        window.dispatchEvent(new Event("storage"))
+                        redirectToHome()
+                    } else {
+                        setError(true)
+                    }
 
-            })
+                })
+            } catch (err) {
+                setError(true)
+            }
         }
     }
 

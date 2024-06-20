@@ -13,15 +13,20 @@ export const RegisterForm = () => {
             name: { value: string }
         }
         if (target.name.value) {
-            axios.post(`http://localhost:8080/user/create?name=${target.name.value}`).then((res) => {
-                if (res.status === 201) {
-                    setError(false)
-                    redirectToLogin()
-                } else {
-                    setError(true)
-                }
+            try {
+                axios.post(`http://localhost:8080/user/create?name=${target.name.value}`).then((res) => {
+                    if (res.status === 201) {
+                        setError(false)
+                        redirectToLogin()
+                    } else {
+                        setError(true)
+                    }
 
-            })
+                })
+            } catch (err) {
+                setError(true)
+            }
+
         }
     }
 
