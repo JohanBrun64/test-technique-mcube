@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { userService } from "../services/userService"
 
-type userReqQuery = { name: string, userId: string }
+type userReqQuery = { name: string }
 type userReq = Request<unknown, unknown, unknown, userReqQuery>
 
 export const usersControllers = {
@@ -9,7 +9,7 @@ export const usersControllers = {
         try {
             if (req.query.name) {
                 const result = await userService.createUser(req.query.name)
-                return res.json(result)
+                return res.status(201).send(result)
             }
             else {
                 res.status(400).send('missing params!')

@@ -2,10 +2,13 @@ import { FormControl } from "@mui/material"
 import axios from "axios"
 import { FormEvent, useState } from "react"
 import { Link, redirect } from "react-router-dom"
+import useLocalStorage from "../hooks/useLocalStorage"
 
 export const LoginForm = () => {
 
     const [error, setError] = useState(false)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [logged, setLogged] = useLocalStorage('userId', '')
 
     const handleSubmitClick = (e: FormEvent<HTMLInputElement>) => {
         e.preventDefault()
@@ -13,7 +16,7 @@ export const LoginForm = () => {
             axios.get(`http://localhost:8080/user/get?name=${e.currentTarget.name}`).then((res) => {
                 if (res.data.userId) {
                     setError(false)
-                    localStorage.setItem("userId", res.data.userId)
+                    setLogged(res.data.userId)
                     redirectToHome()
                 } else {
                     setError(true)
