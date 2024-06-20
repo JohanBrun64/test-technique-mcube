@@ -7,8 +7,7 @@ import useLocalStorage from "../hooks/useLocalStorage"
 export const LoginForm = () => {
 
     const [error, setError] = useState(false)
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const [logged, setLogged] = useLocalStorage('userId', '')
+    const [, setLogged] = useLocalStorage('userId', '')
 
     const handleSubmitClick = (e: FormEvent<HTMLInputElement>) => {
         e.preventDefault()
