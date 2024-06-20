@@ -9,8 +9,11 @@ export const RegisterForm = () => {
 
     const handleSubmitClick = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (e.currentTarget.name) {
-            axios.post(`http://localhost:8080/user/create?name=${e.currentTarget.name.value}`).then((res) => {
+        const target = e.currentTarget as typeof e.currentTarget & {
+            name: { value: string }
+        }
+        if (target.name.value) {
+            axios.post(`http://localhost:8080/user/create?name=${target.name.value}`).then((res) => {
                 if (res.status === 201) {
                     setError(false)
                     redirectToLogin()

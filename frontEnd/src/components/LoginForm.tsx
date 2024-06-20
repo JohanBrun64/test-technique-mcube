@@ -10,8 +10,11 @@ export const LoginForm = () => {
 
     const handleSubmitClick = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (e.currentTarget.value) {
-            axios.get(`http://localhost:8080/user/get?name=${e.currentTarget.name.value}`).then((res) => {
+        const target = e.currentTarget as typeof e.currentTarget & {
+            name: { value: string }
+        }
+        if (target.name.value) {
+            axios.get(`http://localhost:8080/user/get?name=${target.name.value}`).then((res) => {
                 if (res.data.userId) {
                     setError(false)
                     setLogged(res.data.userId)
